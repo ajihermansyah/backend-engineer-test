@@ -15,11 +15,11 @@ type UserController struct {
 	UserRepo repository.UserRepositoryInterface
 }
 
-func (h *UserController) PingController(ctx *gin.Context) {
+func (uc *UserController) PingController(ctx *gin.Context) {
 	ctx.JSON(200, "Server is working fine...")
 }
 
-func (h *UserController) RegisterUserController(ctx *gin.Context) {
+func (uc *UserController) RegisterUserController(ctx *gin.Context) {
 	var user model.User
 
 	body, err := ctx.GetRawData()
@@ -45,7 +45,7 @@ func (h *UserController) RegisterUserController(ctx *gin.Context) {
 		return
 	}
 
-	psw, err := h.UserRepo.CreateUser(user)
+	psw, err := uc.UserRepo.CreateUser(user)
 	if err != nil {
 		fmt.Println("Error creating user :", err)
 		ctx.JSON(500, respModel.FailedResponse{
@@ -62,8 +62,8 @@ func (h *UserController) RegisterUserController(ctx *gin.Context) {
 	ctx.JSON(201, respModel.SuccessResponse{
 		Code:    201,
 		Status:  "success",
-		Message: "Register user successfuly",
-		Data:    user.Password,
+		Message: "Register user successfully",
+		Data:    user,
 	})
 
 }
