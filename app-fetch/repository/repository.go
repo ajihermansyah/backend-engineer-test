@@ -1,6 +1,8 @@
 package repository
 
-import "backend-engineer-test/app-fetch/model"
+import (
+	"backend-engineer-test/app-fetch/model"
+)
 
 type CurrencyRepositoryInterface interface {
 	GetConversionRateCurrency(ratio string) (float64, error)
@@ -14,4 +16,8 @@ type CommodityRepositoryInterface interface {
 	FetchingDataCommodity() (res []model.Commodity, err error)
 	GetListCommodity() (listCommodity []model.Commodity, err error)
 	GetCommodityAggregate() (res []model.DataCommodity, err error)
+}
+
+type CacheRepositoryInterface interface {
+	SetCacheRateCurrency(rateCurrency float64)
 }

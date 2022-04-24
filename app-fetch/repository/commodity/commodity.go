@@ -1,6 +1,8 @@
 package commodity
 
 import (
+	"backend-engineer-test/app-fetch/cache"
+	"backend-engineer-test/app-fetch/config"
 	"backend-engineer-test/app-fetch/helper"
 	"backend-engineer-test/app-fetch/model"
 	"backend-engineer-test/app-fetch/repository"
@@ -62,29 +64,36 @@ func (repo *CommodityRepository) GetListCommodity() (listCommodity []model.Commo
 	return listCommodity, nil
 }
 
-func (repo *CommodityRepository) AddUSDPrice(listData []model.Commodity) (res []model.Commodity, err error) {
+func (repo *CommodityRepository) AddUSDPrice(commodities []model.Commodity) (res []model.Commodity, err error) {
 	var rate float64
+	// cache init
+	cacheWorker := cache.NewCache()
 
-	rate, err = currencyRepo.NewCurrencyRepository().GetConversionRateCurrency("IDR_USD")
-	if err != nil {
-		fmt.Println("Failed to get conversion rate :", err)
-		err = errors.New("Failed to get conversion rate currency")
-		return res, err
+	if cache.RateCurrencyValue == 0 {
+		fmt.Println("Fetching data conversion rate to API site...")
+		rate, err = currencyRepo.NewCurrencyRepository().GetConversionRateCurrency(config.RateCurrencyRatio)
+		if err != nil {
+			err = errors.New("Failed to fetch data conversion rate")
+			return res, err
+		}
+	} else {
+		fmt.Println("Get data conversion rate from cache...")
+		rate = cache.RateCurrencyValue
 	}
 
-	for _, val := range listData {
-		if val.Price == "" {
+	// set cache rate currency
+	cacheWorker.SetCacheRateCurrency(rate)
+
+	for _, commodity := range commodities {
+		if commodity.Price == "" {
 			continue
 		}
-		priceFloat, err := strconv.ParseFloat(val.Price, 64)
-		if err != nil {
-			fmt.Println(err, "Failed to convert price to float for uuid:", val.ID)
-		}
+		priceFloat, _ := strconv.ParseFloat(commodity.Price, 64)
 
 		dollar := priceFloat * rate
 
-		val.PriceUSD = fmt.Sprintf("$%f", dollar)
-		res = append(res, val)
+		commodity.PriceUSD = fmt.Sprintf("$%f", dollar)
+		res = append(res, commodity)
 	}
 
 	return res, nil

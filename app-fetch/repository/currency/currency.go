@@ -21,8 +21,6 @@ func NewCurrencyRepository() repository.CurrencyRepositoryInterface {
 func (repo *CurrencyRepository) GetConversionRateCurrency(ratio string) (float64, error) {
 	var rate model.CurrencyRate
 
-	fmt.Println("Getting conversion rate for", ratio)
-
 	url := fmt.Sprintf("https://free.currconv.com/api/v7/convert?q=%s&compact=ultra&apiKey=%s", ratio, config.Key)
 	resp, err := http.Get(url)
 	if err != nil {
