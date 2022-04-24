@@ -1,8 +1,8 @@
 package token
 
 import (
+	httpHelper "backend-engineer-test/app-auth/helper/http"
 	"backend-engineer-test/app-auth/model"
-	respModel "backend-engineer-test/app-auth/model/response"
 	"backend-engineer-test/app-auth/repository"
 	"encoding/json"
 	"fmt"
@@ -12,6 +12,7 @@ import (
 )
 
 type TokenController struct {
+	Helper    httpHelper.HTTPHelper
 	TokenRepo repository.TokenRepositoryInterface
 }
 
@@ -21,34 +22,19 @@ func (tc *TokenController) GenerateTokenController(ctx *gin.Context) {
 	body, err := ctx.GetRawData()
 	if err != nil {
 		fmt.Println("Error read request body :", err)
-		ctx.JSON(500, respModel.FailedResponse{
-			Code:    500,
-			Status:  "failed",
-			Message: "Error reading request body",
-		})
-
+		tc.Helper.SendError(ctx, 500, "Error reading request body", "error", tc.Helper.EmptyJsonMap())
 		return
 	}
 
 	if err := json.Unmarshal(body, &user); err != nil {
 		fmt.Println("Error unmarshaling json body", err)
-		ctx.JSON(500, respModel.FailedResponse{
-			Code:    500,
-			Status:  "failed",
-			Message: "Error unmarshaling JSON body",
-		})
-
+		tc.Helper.SendError(ctx, 500, "Error unmarshaling JSON body", "error", tc.Helper.EmptyJsonMap())
 		return
 	}
 
 	jwtToken, err := tc.TokenRepo.GenerateToken(user)
 	if err != nil {
-		ctx.JSON(500, respModel.FailedResponse{
-			Code:    500,
-			Status:  "failed",
-			Message: err.Error(),
-		})
-
+		tc.Helper.SendError(ctx, 500, err.Error(), "error", tc.Helper.EmptyJsonMap())
 		return
 	}
 
@@ -56,12 +42,7 @@ func (tc *TokenController) GenerateTokenController(ctx *gin.Context) {
 		"jwt_token": jwtToken,
 	}
 
-	ctx.JSON(200, respModel.SuccessResponse{
-		Code:    200,
-		Status:  "success",
-		Message: "Generate token successfully",
-		Data:    dataResponse,
-	})
+	tc.Helper.SendSuccess(ctx, "Generate token successfully", dataResponse)
 }
 
 func (tc *TokenController) GetClaimTokenController(ctx *gin.Context) {
@@ -71,20 +52,9 @@ func (tc *TokenController) GetClaimTokenController(ctx *gin.Context) {
 	tokenString := tempString[1]
 	claim, err := tc.TokenRepo.ParseToken(tokenString)
 	if err != nil {
-		ctx.JSON(500, respModel.FailedResponse{
-			Code:    500,
-			Status:  "failed",
-			Message: err.Error(),
-		})
-
+		tc.Helper.SendError(ctx, 500, err.Error(), "error", tc.Helper.EmptyJsonMap())
 		return
 	}
 
-	ctx.JSON(200, respModel.SuccessResponse{
-		Code:    200,
-		Status:  "success",
-		Message: "Generate claim token successfully",
-		Data:    claim,
-	})
-
+	tc.Helper.SendSuccess(ctx, "Generate claim token successfully", claim)
 }

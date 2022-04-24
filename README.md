@@ -33,8 +33,8 @@ then to run the container based on the image, execute the below command after th
 $ docker run -d -p <host port>:<docker port> <image-name>
 ```
 note: 
-`-d` means the docker will run detached/in background  
-`-p` means the docker will publish and listen to those port
+- `-d` means the docker will run detached/in background  
+- `-p` means the docker will publish and listen to those port
 
 
 ### App-Auth Example
@@ -49,11 +49,11 @@ $ curl localhost:8080/ping
 ``` 
 Using Gin Golang Framework
 
-              HTTP Response
-                    A
-                    |
-                    |
-HTTP Request ---> Controllers <---> Repository <---> Database
+                                    HTTP Response
+                                         A
+                                         |
+                                         |
+HTTP Request ---> HTTP Helper  ---> Controllers <---> Repository <---> Database
               1                 2                3     
             (Model)          (Model)          (Model)    
 
@@ -169,29 +169,29 @@ The API serve 4 endpoint routes for App-Fetch.
 ```
 backend-engineer-test
     |--app-auth
-		|config                 	- to initialize environment apps
-			|--config.go            - for getting environment config apps variables
-		|--controllers              - to store package controllers
-			|--token        		- to handle token controllers
-				|--token.go         - for handle generate JWT token
-			|--user             	- to handle user controllers
-				|--user.go      	- for handle register new user and generate password
-		|--data-store               - folder data-store for manage base file database
-			|--data.csv 			- file for store data user register 
+		|config                 	            - to initialize environment apps
+			|--config.go                        - for getting environment config apps variables
+		|--controllers                          - to store package controllers
+			|--token        		            - to handle token controllers
+				|--token.go                     - for handle generate JWT token
+			|--user             	            - to handle user controllers
+				|--user.go      	            - for handle register new user and generate password
+		|--data-store                           - folder data-store for manage base file database
+			|--data.csv 			            - file for store data user register 
        
-		|--models                   - to store package models for object and mysql query
-			|--response         	- for define struct response
+		|--models                               - to store package models for object and mysql query
+			|--response         	            - for define struct response
 				|--response.go
-			|--token.go             - for define struct token claims 	
-			|--user.go              - for define struct user
-		|--repository               - folder containing logic for each entity
+			|--token.go                         - for define struct token claims 	
+			|--user.go                          - for define struct user
+		|--repository                           - folder containing logic for each entity
 			|--token
-				|--token.go         - file containing various logical sets for entity token
+				|--token.go                     - file containing various logical sets for entity token
 			|--user
-				|--user.go	        - file containing various logical sets for entity user
-			|--repository.go        - file containing various functions that represent various entities
-		|--.env                     - file containing app configuration variables
-        |--dockerfile               - file configruation docker image
+				|--user.go	                    - file containing various logical sets for entity user
+			|--repository.go                    - file containing various functions that represent various entities
+		|--.env                                 - file containing app configuration variables
+        |--dockerfile                           - file configruation docker image
 		|--main.go      
 		
 	|--app-fetch

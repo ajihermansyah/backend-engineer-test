@@ -5,13 +5,14 @@ import (
 	"backend-engineer-test/app-auth/repository"
 	"encoding/json"
 
-	respModel "backend-engineer-test/app-auth/model/response"
+	httpHelper "backend-engineer-test/app-auth/helper/http"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
 
 type UserController struct {
+	Helper   httpHelper.HTTPHelper
 	UserRepo repository.UserRepositoryInterface
 }
 
@@ -25,45 +26,24 @@ func (uc *UserController) RegisterUserController(ctx *gin.Context) {
 	body, err := ctx.GetRawData()
 	if err != nil {
 		fmt.Println("Error read request body :", err)
-		ctx.JSON(500, respModel.FailedResponse{
-			Code:    500,
-			Status:  "failed",
-			Message: "Error reading request body",
-		})
-
+		uc.Helper.SendError(ctx, 500, "Error reading request body", "error", uc.Helper.EmptyJsonMap())
 		return
 	}
 
 	if err := json.Unmarshal(body, &user); err != nil {
 		fmt.Println("Error unmarshalling json body :", err)
-		ctx.JSON(500, respModel.FailedResponse{
-			Code:    500,
-			Status:  "failed",
-			Message: "Error unmarshaling JSON body",
-		})
-
+		uc.Helper.SendError(ctx, 500, "Error unmarshaling JSON body", "error", uc.Helper.EmptyJsonMap())
 		return
 	}
 
 	psw, err := uc.UserRepo.CreateUser(user)
 	if err != nil {
 		fmt.Println("Error creating user :", err)
-		ctx.JSON(500, respModel.FailedResponse{
-			Code:    500,
-			Status:  "failed",
-			Message: err.Error(),
-		})
-
+		uc.Helper.SendError(ctx, 500, err.Error(), "error", uc.Helper.EmptyJsonMap())
 		return
 	}
 
 	user.Password = psw
-
-	ctx.JSON(201, respModel.SuccessResponse{
-		Code:    201,
-		Status:  "success",
-		Message: "Register user successfully",
-		Data:    user,
-	})
+	uc.Helper.SendSuccess(ctx, "Register user successfully", user)
 
 }

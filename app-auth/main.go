@@ -4,6 +4,7 @@ import (
 	"backend-engineer-test/app-auth/config"
 	tokenController "backend-engineer-test/app-auth/controllers/token"
 	userController "backend-engineer-test/app-auth/controllers/user"
+	authHelper "backend-engineer-test/app-auth/helper/auth"
 	tokenRepository "backend-engineer-test/app-auth/repository/token"
 	userRepository "backend-engineer-test/app-auth/repository/user"
 	"fmt"
@@ -33,7 +34,7 @@ func main() {
 	// endpoint auth API
 	router.POST("/auth/register", userController.RegisterUserController)
 	router.GET("/auth/generate-token", tokenController.GenerateTokenController)
-	router.GET("/auth/claims-token", tokenController.GetClaimTokenController)
+	router.GET("/auth/claims-token", authHelper.CheckAuthorizationHeader, tokenController.GetClaimTokenController)
 
 	listenPort := fmt.Sprintf(":%s", config.PORT)
 	router.Run(listenPort)
