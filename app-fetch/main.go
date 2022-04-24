@@ -4,6 +4,7 @@ import (
 	"backend-engineer-test/app-fetch/config"
 	commodityController "backend-engineer-test/app-fetch/controllers/commodity"
 	tokenController "backend-engineer-test/app-fetch/controllers/token"
+	authHelper "backend-engineer-test/app-fetch/helper/auth"
 	commodityRepository "backend-engineer-test/app-fetch/repository/commodity"
 	tokenRepository "backend-engineer-test/app-fetch/repository/token"
 	"fmt"
@@ -35,11 +36,11 @@ func main() {
 	})
 
 	// endpoint auth API
-	router.GET("/auth/claims-token", tokenController.GetClaimTokenController)
+	router.GET("/auth/claims-token", authHelper.CheckAuthorizationHeader, tokenController.GetClaimTokenController)
 
 	// endpoint
-	router.GET("/commodities", commodityController.GetListCommodityController)
-	router.GET("/commodities/aggregate", commodityController.GetCommodityAggregateController)
+	router.GET("/commodities", authHelper.CheckAuthorizationHeader, commodityController.GetListCommodityController)
+	router.GET("/commodities/aggregate", authHelper.CheckAuthorizationAdminAccess, commodityController.GetCommodityAggregateController)
 
 	listenPort := fmt.Sprintf(":%s", config.PORT)
 	router.Run(listenPort)

@@ -1,7 +1,7 @@
 package token
 
 import (
-	respModel "backend-engineer-test/app-fetch/model/response"
+	httpHelper "backend-engineer-test/app-fetch/helper/http"
 	"backend-engineer-test/app-fetch/repository"
 	"strings"
 
@@ -9,6 +9,7 @@ import (
 )
 
 type TokenController struct {
+	Helper    httpHelper.HTTPHelper
 	TokenRepo repository.TokenRepositoryInterface
 }
 
@@ -19,20 +20,9 @@ func (tc *TokenController) GetClaimTokenController(ctx *gin.Context) {
 	tokenString := tempString[1]
 	claim, err := tc.TokenRepo.ParseToken(tokenString)
 	if err != nil {
-		ctx.JSON(500, respModel.FailedResponse{
-			Code:    500,
-			Status:  "failed",
-			Message: err.Error(),
-		})
-
+		tc.Helper.SendError(ctx, 500, err.Error(), "error", tc.Helper.EmptyJsonMap())
 		return
 	}
 
-	ctx.JSON(200, respModel.SuccessResponse{
-		Code:    200,
-		Status:  "success",
-		Message: "Generate claim token successfully",
-		Data:    claim,
-	})
-
+	tc.Helper.SendSuccess(ctx, "Generate claim token successfully", claim)
 }
