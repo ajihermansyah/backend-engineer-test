@@ -69,7 +69,7 @@ HTTP Request ---> HTTP Helper  ---> Controllers <---> Repository <---> Database
 ```
 
 The API serve 4 endpoint routes for App-auth.
-- GET  [/ping] for checking server healt check 
+- GET  [/ping] for checking server health check 
 - POST [/auth/register] for register new user
 - GET  [/auth/generate-token] for generate token by phone and password by user registered
 - GET  [/auth/claims-token] fot get data user by jwt token
@@ -95,8 +95,8 @@ Set up the application `App-Fetch`, you need to have already installed golang ve
 For run and build this app, there are two ways to run this after the configuration values for the app is set up in file `app-fetch/.env`.
 
 **Steps**
-*git clone [https://github.com/ajihermansyah/backend-engineer-test.git](https://github.com/ajihermansyah/backend-engineer-test.git)
-*The first method is to run the application directly in local machine by using :
+- git clone [https://github.com/ajihermansyah/backend-engineer-test.git](https://github.com/ajihermansyah/backend-engineer-test.git)
+- The first method is to run the application directly in local machine by using :
 ```
 $ cd app-fetch
 $ go mod tidy
@@ -104,7 +104,7 @@ $ go mod tidy
 $ go run main.go
 ```
 
-*The other method is to build this app docker image and run a container based on the image. To build the image, execute these in your machine :
+- The other method is to build this app docker image and run a container based on the image. To build the image, execute these in your machine :
 ```
 $ cd app-fetch
 $ docker build -t <image-name> .
@@ -115,8 +115,8 @@ then to run the container based on the image, execute the below command after th
 $ docker run -d -p <host port>:<docker port> <image-name>
 ```
 note: 
-`-d` means the docker will run detached/in background  
-`-p` means the docker will publish and listen to those port
+- `-d` means the docker will run detached/in background  
+- `-p` means the docker will publish and listen to those port
 
 
 ### App-Fetch Example
@@ -159,7 +159,7 @@ HTTP Request ---> HTTP Helper ---> Controllers <---> Repository <---> External D
 ```
 
 The API serve 4 endpoint routes for App-Fetch.
-- GET  [/ping] for checking server healt check 
+- GET  [/ping] for checking server health check 
 - GET  [/auth/claims-token] fot get data user by jwt token
 
 - GET  [/commodities] for get list data commodity form external source API site
